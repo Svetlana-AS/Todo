@@ -5,13 +5,17 @@ import styles from './Todolist.module.css'
 
 type TodolistType =
     {
+        todolistID:string
         title:string
-        task:TaskType[]
+        tasks:TaskType[]
 
-        removeTask: (taskId:string) => void
-        changeFilter:(nextFilter:FilterValuesType)=>void
-        addTask:(title:string) =>void
-        changeIsDone:(id:string,newIsDone:boolean)=>void
+        removeTask: (todolistID:string,taskId:string) => void
+        changeFilter:(todolistID:string,nextFilter:FilterValuesType)=>void
+
+        filter:FilterValuesType
+        addTask:(todolistID:string,title:string) =>void
+        changeIsDone:(todolistID:string,id:string,newIsDone:boolean)=>void
+        removeTodo:(todolistID:string)=>void
     }
 
 export type TaskType = {
@@ -30,13 +34,13 @@ export const Todolist:FC<TodolistType> = (props) => {
     let [buttonName, setButtonName] = useState<FilterValuesType>('all')
 
     const changeIsDoneHandler =(tID:string,newIsDone:boolean) =>{
-        props.changeIsDone(tID, newIsDone)
+        props.changeIsDone(props.todolistID,tID, newIsDone)
         // console.log(t.id)
 
     }
 
 
-    const taskJSXElement:Array<JSX.Element> = props.task.map((t:TaskType):JSX.Element =>{
+    const taskJSXElement:Array<JSX.Element> = props.tasks.map((t:TaskType):JSX.Element =>{
 
 
 
@@ -45,7 +49,7 @@ export const Todolist:FC<TodolistType> = (props) => {
             <li key={t.id} className={t.isDone ? styles.isDone: ''}>
                 <input type="checkbox" checked={t.isDone} onChange={(e)=>changeIsDoneHandler(t.id,e.currentTarget.checked)}/>
                 <span>{t.title}</span>
-                <button onClick={()=>props.removeTask(t.id)}>+</button>
+                <button onClick={()=>props.removeTask(props.todolistID,t.id)}>+</button>
             </li>
         )
     })
@@ -55,7 +59,7 @@ export const Todolist:FC<TodolistType> = (props) => {
         setTitle(event.currentTarget.value)}
     const addTaskHandler = () =>{
         if(title.trim()!==''){
-            props.addTask(title.trim())
+            props.addTask(props.todolistID,title.trim())
             setTitle('')
         }else {
             setError('Title is reqired')
@@ -72,22 +76,31 @@ export const Todolist:FC<TodolistType> = (props) => {
         : null
 
     const onAllClickHandler = () =>{
-        props.changeFilter("all")
+        props.changeFilter(props.todolistID,"all")
         setButtonName("all")
     };
     const onActiveClickHandler = () =>{
-        props.changeFilter("active")
+        props.changeFilter(props.todolistID,"active")
         setButtonName("active")
     };
     const onCompletedClickHandler = () =>{
-        props.changeFilter("completed")
+        props.changeFilter(props.todolistID,"completed")
         setButtonName("completed")
     };
+
+    const removeTodoHandler =() =>{
+    props.removeTodo(props.todolistID)
+    }
+
 
     return (
         <div className="App">
             <div className='todolist'>
-                <h3>{props.title}</h3>
+                <h3>
+                    {props.title}
+                    <button onClick={removeTodoHandler}>х</button>
+                </h3>
+
                 <div>
                     <input value={title}
                            className={error ? styles.error : ''}
