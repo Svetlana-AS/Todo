@@ -92,7 +92,7 @@ function App() {
         setTodolists(todolist.map(el=>el.id===todolistID ? {...el,filter:valueFilter} :el))
         // setFilter(value)
     }
- const a=5
+
 
     return (
         <div className="App">
