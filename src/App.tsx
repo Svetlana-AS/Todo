@@ -69,7 +69,7 @@ function App() {
         // setTasks(tasks.map(el => el.id === newId ? {...el, isDone: newIsDone} : el))
     }
 
-
+// let f=5
     const removeTask = (todolistID:string,taskID: string) => {
         setTasks({...tasks,[todolistID]:tasks[todolistID].filter(el=>el.id!==taskID)})
         // setTasks(tasks.filter(t => t.id !== taskID))
